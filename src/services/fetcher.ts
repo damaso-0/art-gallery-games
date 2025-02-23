@@ -5,17 +5,26 @@ export interface IFetcher {
     endpoint: ApiEndpoint
     id?: number
     limit?: number
-    fields?: string
+    fields?: string[]
     page?: number
+    q?: string
 }
 
-export const fetcher = async ({ endpoint, id, limit = 5, fields, page }: IFetcher) => {
+export const fetcher = async ({
+    endpoint,
+    id,
+    limit = 5,
+    fields,
+    page,
+    q,
+}: IFetcher) => {
     const idParam = id ? `/${id}` : ''
     const limitParam = limit ? `?limit=${limit}` : ''
-    const fieldsParam = fields ? `&fields=${fields}` : ''
+    const fieldsParam = fields?.length ? `&fields=${fields.join(',')}` : ''
     const pageParam = page ? `&page=${page}` : ''
-    
-    const url = `${API_URL}/${endpoint}${idParam}${limitParam}${fieldsParam}${pageParam}`
+    const qParam = q ? `&q=${q}` : ''
+
+    const url = `${API_URL}/${endpoint}${limitParam}${idParam}${qParam}${fieldsParam}${pageParam}`
     const response = await fetch(url)
     return response.json()
 }

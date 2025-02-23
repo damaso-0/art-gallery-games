@@ -1,0 +1,10 @@
+---
+import Layout from '../../../layouts/Layout.astro'
+import QuizGame from './components'
+---
+
+<Layout>
+    <main class="w-full h-full bg-black p-8">
+        <QuizGame client:load />
+    </main>
+</Layout>
