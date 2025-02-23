@@ -8,6 +8,7 @@ import Button from '../../../../components/Button'
 import type { IApiPagination } from '../../../../interfaces/data'
 import { QUIZ_ARTISTIC_MOVEMENTS } from '../../../../constants/quiz'
 import OptionsMenu from './OptionsMenu'
+import ImageArea from './ImageArea'
 
 const QuizGame = () => {
     const [score, setScore] = useState({ correct: 0, incorrect: 0 })
@@ -209,31 +210,10 @@ const QuizGame = () => {
                             </select>
                         </div>
 
-                        <figure className="w-full flex flex-col gap-4">
-                            <ImageViewer
-                                onImageLoaded={handleImageLoaded}
-                                galleryID="quiz-image-viewer"
-                                images={[
-                                    {
-                                        largeURL: getImageUrl(
-                                            mainArt?.image_id,
-                                            '1686'
-                                        ),
-                                        thumbnailURL: getImageUrl(
-                                            mainArt?.image_id,
-                                            '843'
-                                        ),
-                                        width: mainArt?.thumbnail?.width ?? 200,
-                                        height:
-                                            mainArt?.thumbnail?.height ?? 200,
-                                        alt: mainArt?.title ?? '',
-                                    },
-                                ]}
-                            />
-                            <figcaption className="text-1xl text-center font-bold text-white">
-                                {mainArt?.title}
-                            </figcaption>
-                        </figure>
+                        <ImageArea
+                            artwork={mainArt}
+                            handleImageLoaded={handleImageLoaded}
+                        />
                     </div>
 
                     <div className="w-full h-full flex flex-col gap-8">
