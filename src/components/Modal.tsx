@@ -1,6 +1,6 @@
 import '../styles/modal.css'
 
-interface IModal {
+export interface IModal {
     title: string
     description: string
 
@@ -17,7 +17,7 @@ const Modal = ({ title, description, isOpen, onClose, footer }: IModal) => {
         <button
             disabled={!isOpen}
             onClick={onClose}
-            className="w-full h-full bg-[rgba(0,0,0,0.6)] fixed top-0 left-0 flex justify-center items-center"
+            className="w-full h-full bg-[rgba(0,0,0,0.6)] fixed top-0 left-0 flex justify-center items-center z-10"
         >
             <div
                 className={`${isOpen ? 'animate-modal' : ''} bg-zinc-950 text-white p-8 border border-zinc-800 rounded-md flex flex-col gap-8`}

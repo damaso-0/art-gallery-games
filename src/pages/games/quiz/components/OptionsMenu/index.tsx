@@ -9,7 +9,7 @@ interface IQuizOptions {
     loading: boolean
     handleAnswer: (answer: 'correct' | 'incorrect') => void
     handleNextQuestion: () => void
-    handleExit: () => void
+    handleQuit: () => void
 }
 
 /** Quiz options menu */
@@ -19,7 +19,7 @@ const OptionsMenu = ({
     loading,
     handleAnswer,
     handleNextQuestion,
-    handleExit,
+    handleQuit,
 }: IQuizOptions) => {
     const [options] = useState(
         [...artworkOptions].toSorted(() => Math.random() - 0.5)
@@ -56,7 +56,7 @@ const OptionsMenu = ({
                 handleClick(options[index])()
             }
 
-            if (e.key === 'Escape') handleExit()
+            if (e.key === 'Escape') handleQuit()
             if (e.key === 'Enter') handleNextQuestion()
         }
 
@@ -99,7 +99,7 @@ const OptionsMenu = ({
                 <Button
                     loading={loading}
                     className="w-1/4 hover:bg-red-950!"
-                    onClick={handleExit}
+                    onClick={handleQuit}
                 >
                     Exit
                 </Button>

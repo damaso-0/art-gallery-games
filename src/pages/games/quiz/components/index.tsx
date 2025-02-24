@@ -1,19 +1,24 @@
-import { Suspense, useEffect, useState } from 'react'
-import ImageViewer from '../../../../components/ImageViewer'
-import { getImageUrl } from '../../../../services/images'
+import { Fragment, Suspense, useEffect, useState } from 'react'
 import { searchArtworks } from '../../../../services/artworks'
 import type { IArtwork } from '../../../../interfaces/artworks'
-import Modal from '../../../../components/Modal'
+import Modal, { type IModal } from '../../../../components/Modal'
 import Button from '../../../../components/Button'
 import type { IApiPagination } from '../../../../interfaces/data'
-import { QUIZ_ARTISTIC_MOVEMENTS } from '../../../../constants/quiz'
 import OptionsMenu from './OptionsMenu'
 import ImageArea from './ImageArea'
+import ScoreScreen from './ScoreScreen'
 
 const QuizGame = () => {
     const [score, setScore] = useState({ correct: 0, incorrect: 0 })
-    const [exit, setExit] = useState({ press: false, confirm: false })
+    const [quitGame, setQuitGame] = useState({ press: false, confirm: false })
     const [end, setEnd] = useState(false)
+    const [modal, setModal] = useState<IModal>({
+        isOpen: false,
+        title: '',
+        description: '',
+        footer: null,
+        onClose: () => {},
+    })
 
     const [exibitArtworkIds, setExibitArtworkIds] = useState<number[]>([])
 
@@ -21,9 +26,6 @@ const QuizGame = () => {
     const [mainArt, setMainArt] = useState<IArtwork>()
     const [pagination, setPagination] = useState<IApiPagination>()
     const [duplicatedArtists, setDuplicatedArtists] = useState<number>(0)
-    const [artisticMovement, setArtisticMovement] = useState<string>(
-        QUIZ_ARTISTIC_MOVEMENTS[0]
-    )
     const [imageLoaded, setImageLoaded] = useState(false)
     const optionsPerQuestion = 4
 
@@ -105,7 +107,7 @@ const QuizGame = () => {
         fetchData()
 
         const handleKeyDown = (e: KeyboardEvent) => {
-            if (e.key === 'Enter' && (end || exit.press)) {
+            if (e.key === 'Enter' && (end || quitGame.press)) {
                 return handleRestart()
             }
         }
@@ -133,7 +135,30 @@ const QuizGame = () => {
 
     const handleImageLoaded = () => setImageLoaded(true)
 
-    const handleExit = () => setExit({ ...exit, press: true })
+    const cleanModal = () => {
+        setModal({
+            isOpen: false,
+            title: '',
+            description: '',
+            footer: null,
+            onClose: () => {},
+        })
+    }
+
+    const handleQuit = () => {
+        setModal({
+            isOpen: true,
+            title: 'Do you want to quit the game?',
+            description: 'Your progress will be lost.',
+            footer: (
+                <Fragment>
+                    <Button onClick={() => setEnd(true)}>Yes</Button>
+                    <Button onClick={cleanModal}>No</Button>
+                </Fragment>
+            ),
+            onClose: cleanModal,
+        })
+    }
 
     const handleRestart = () => {
         setScore({ correct: 0, incorrect: 0 })
@@ -146,76 +171,34 @@ const QuizGame = () => {
 
     return (
         <Suspense>
+            {modal.isOpen && (
+                <Modal
+                    title={modal.title}
+                    description={modal.description}
+                    isOpen={modal.isOpen}
+                    onClose={modal.onClose}
+                    footer={modal.footer}
+                />
+            )}
+
             {end && (
-                <Modal
-                    title={`Current score: ${score.correct}/${score.incorrect + score.correct}`}
-                    description="Your progress will be lost."
-                    isOpen={end}
-                    onClose={handleRestart}
-                    footer={
-                        <Button className="w-full" onClick={handleRestart}>
-                            Ok
-                        </Button>
-                    }
+                <ScoreScreen
+                    correctAnswers={score.correct}
+                    incorrectAnswers={score.incorrect}
                 />
             )}
 
-            {exit.press && (
-                <Modal
-                    title="Are you sure you want to exit?"
-                    description="Your progress will be lost."
-                    isOpen={exit.press}
-                    onClose={() => setExit({ ...exit, press: false })}
-                    footer={
-                        <>
-                            <Button
-                                className="w-full"
-                                onClick={() =>
-                                    setExit({ ...exit, confirm: true })
-                                }
-                            >
-                                Yes
-                            </Button>
-                            <Button
-                                className="w-full"
-                                onClick={() =>
-                                    setExit({ ...exit, press: false })
-                                }
-                            >
-                                No
-                            </Button>
-                        </>
-                    }
-                />
-            )}
-
-            {data && mainArt && (
+            {data && mainArt && !end && (
                 <section className="w-full max-w-5xl mx-auto h-full grid grid-cols-2 gap-8">
+                    {/* first column */}
                     <div className="w-full h-full flex flex-col gap-4">
-                        <div className="w-full flex gap-4 text-zinc-200 items-center">
-                            <p className="font-bold text-nowrap">
-                                Select Artistic Movement:
-                            </p>
-                            <select
-                                className="w-full text-zinc-200 font-semibold bg-zinc-900 rounded-sm p-2 outline-none cursor-pointer"
-                                onChange={(e) =>
-                                    setArtisticMovement(e.target.value)
-                                }
-                            >
-                                {QUIZ_ARTISTIC_MOVEMENTS.map((mov) => (
-                                    <option key={mov} value={mov}>
-                                        {mov}
-                                    </option>
-                                ))}
-                            </select>
-                        </div>
-
                         <ImageArea
                             artwork={mainArt}
                             handleImageLoaded={handleImageLoaded}
                         />
                     </div>
 
+                    {/* second column */}
                     <div className="w-full h-full flex flex-col gap-8">
                         <div className="w-full flex gap-2 items-center justify-between">
                             <h2 className="text-2xl font-bold text-white">
@@ -233,7 +216,7 @@ const QuizGame = () => {
                             correctArtwork={mainArt}
                             handleAnswer={handleAnswer}
                             handleNextQuestion={fetchData}
-                            handleExit={handleExit}
+                            handleQuit={handleQuit}
                             loading={loading || !imageLoaded}
                         />
                     </div>
