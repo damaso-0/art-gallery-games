@@ -1,0 +1,85 @@
+.image-modal-info-skeleton {
+    position: relative;
+}
+
+.image-modal-info-skeleton::after {
+    content: '';
+
+    width: 100%;
+    height: 100%;
+    border-radius: 4px;
+
+    position: absolute;
+    inset: 0;
+
+    background: linear-gradient(
+        -45deg,
+        rgba(255, 255, 255, 0.1) 25%,
+        rgba(255, 255, 255, 0.2) 37%,
+        rgba(255, 255, 255, 0.1) 63%
+    );
+    background-size: 400% 100%;
+    animation: skeleton 1.5s ease infinite;
+}
+
+@keyframes skeleton {
+    0% {
+        background-position: 100% 50%;
+    }
+
+    100% {
+        background-position: 0 50%;
+    }
+}
+
+.image-modal-thumbnail img {
+    transition: all 0.1s ease;
+}
+
+.image-modal-thumbnail img:hover {
+    transform: scale(1.05);
+}
+
+.image-modal-wrapper {
+    animation: modal-up 0.3s ease;
+}
+
+@keyframes modal-up {
+    0% {
+        transform: translateY(2rem);
+        opacity: 0;
+    }
+
+    100% {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.image-modal-image-background {
+    position: relative;
+    transition: all 0.2s ease;
+}
+
+.image-modal-image-background::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+}
+
+.image-modal-description::-webkit-scrollbar {
+    width: 8px;
+}
+
+.image-modal-description::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.image-modal-description::-webkit-scrollbar-thumb {
+    background: #777;
+    border-radius: 99px;
+}

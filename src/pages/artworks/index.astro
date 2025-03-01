@@ -1,0 +1,43 @@
+---
+export const prerender = false
+
+import Layout from '../../layouts/Layout.astro'
+import { getArtworks } from '../../services/artworks'
+import ImageGrid from '../../components/ImageGrid.astro'
+import Button from '../../components/Button'
+
+const page = Number(Astro.url.searchParams.get('page') ?? 1)
+
+const { data: artworks } = await getArtworks({
+    page,
+    limit: 10,
+    fields: [
+        'id',
+        'image_id',
+        'thumbnail',
+        'title',
+        'description',
+        'artist_display',
+        'artist_id',
+        'artwork_type_title',
+        'artwork_type_id',
+        'place_of_origin',
+        'date_display',
+        'color',
+    ],
+})
+---
+
+<Layout>
+    <main class="w-full h-full p-8">
+        <section class="w-full h-full flex flex-col gap-4 mb-10">
+            <ImageGrid artworks={artworks} />
+
+            <div class="w-fit mx-auto pb-50">
+                <a href={`?page=${page + 1}`} class="text-white">
+                    <Button client:idle>Next page</Button>
+                </a>
+            </div>
+        </section>
+    </main>
+</Layout>
