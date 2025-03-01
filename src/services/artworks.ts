@@ -12,8 +12,11 @@ export const getArtworks = async (
     return await fetcher({ endpoint: 'artworks', ...props })
 }
 
-export const getArtworkById = async (id: number): Promise<IArtworkResponse> => {
-    return await fetcher({ endpoint: 'artworks', id })
+export const getArtworkById = async ({
+    id,
+    ...props
+}: IGetArtworks): Promise<IArtworkResponse> => {
+    return await fetcher({ endpoint: 'artworks', id, ...props })
 }
 
 export const searchArtworks = async ({

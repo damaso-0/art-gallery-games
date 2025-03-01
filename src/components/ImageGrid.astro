@@ -1,0 +1,27 @@
+---
+import type { IArtwork } from '../interfaces/artworks'
+import '../styles/image-grid.css'
+import ImageModal from './ImageModal'
+
+interface Props {
+    artworks: IArtwork[]
+}
+
+const { artworks } = Astro.props
+---
+
+<ul class="image-grid-list">
+    {
+        artworks.map((artwork) => (
+            <li class="image-grid-item">
+                <ImageModal
+                    client:load
+                    id={artwork.id}
+                    image_id={artwork.image_id}
+                    thumbnail={artwork?.thumbnail}
+                    color={artwork?.color}
+                />
+            </li>
+        ))
+    }
+</ul>

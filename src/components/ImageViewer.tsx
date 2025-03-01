@@ -4,7 +4,7 @@ import 'photoswipe/style.css'
 import '../styles/image-viewer.css'
 
 interface IImageViewer {
-    onImageLoaded: () => void
+    onImageLoaded?: () => void
     galleryID: string
     images: {
         thumbnailURL: string
@@ -13,6 +13,7 @@ interface IImageViewer {
         height: number
         alt: string
     }[]
+    className?: string
 }
 
 const ImageViewer = (props: IImageViewer) => {
@@ -83,7 +84,7 @@ const ImageViewer = (props: IImageViewer) => {
                         src={image.thumbnailURL}
                         alt={image.alt}
                         loading="lazy"
-                        className="rounded-md bg-zinc-900"
+                        className={`rounded-md bg-zinc-900 ${props.className}`}
                         onLoad={props.onImageLoaded}
                     />
                 </a>

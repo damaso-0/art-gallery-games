@@ -1,11 +1,12 @@
 import { API_URL } from '../constants/api'
 import type { ApiEndpoint } from '../interfaces/api'
+import type { IArtwork } from '../interfaces/artworks'
 
 export interface IFetcher {
     endpoint: ApiEndpoint
     id?: number
     limit?: number
-    fields?: string[]
+    fields?: (keyof IArtwork)[]
     page?: number
     q?: string
 }
@@ -19,12 +20,17 @@ export const fetcher = async ({
     q,
 }: IFetcher) => {
     const idParam = id ? `/${id}` : ''
-    const limitParam = limit ? `?limit=${limit}` : ''
-    const fieldsParam = fields?.length ? `&fields=${fields.join(',')}` : ''
-    const pageParam = page ? `&page=${page}` : ''
-    const qParam = q ? `&q=${q}` : ''
 
-    const url = `${API_URL}/${endpoint}${limitParam}${idParam}${qParam}${fieldsParam}${pageParam}`
+    const params = { ...(!id && { limit }), fields, page, q }
+
+    const queryParams = Object.entries(params)
+        .filter(([_, value]) => value !== undefined && value !== null)
+        .map(([key, value]) => `${key}=${value}`)
+        .join('&')
+
+    const url = `${API_URL}/${endpoint}${idParam}?${queryParams}`
+
+    console.log(url)
     const response = await fetch(url)
     return response.json()
 }
